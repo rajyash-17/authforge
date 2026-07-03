@@ -7,6 +7,8 @@ import { users } from "../../db/schema/users";
 import type { SignupInput } from "./auth.validation";
 import { email } from "zod";
 
+import {UserResponseDto} from "../../shared/dto/user-response.dto";
+
 export class AuthService{
     async signup(data:SignupInput){
         const existingUser=await db.query.users.findFirst({
@@ -28,13 +30,7 @@ export class AuthService{
             })
             .returning();
         
-        return{
-            id:user.id,
-            name:user.name,
-            email:user.email,
-            createdAt:user.createdAt
-
-        };
+        return UserResponseDto.from(user);
     }
 }
 
