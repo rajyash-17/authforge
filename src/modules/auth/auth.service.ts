@@ -17,6 +17,17 @@ export class AuthService{
 
         const passwordHash= await argon2.hash(data.password);
         console.log(passwordHash);
+
+        const[user]=await db
+            .insert(users)
+            .values({
+                name:data.name,
+                email:data.email,
+                passwordHash,
+            })
+            .returning();
+        
+        return user;
     }
 }
 
