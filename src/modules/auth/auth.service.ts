@@ -4,10 +4,12 @@ import {eq} from "drizzle-orm";
 import {db} from '../../db';
 import { users } from "../../db/schema/users";
 
-import type { SignupInput } from "./auth.validation";
+import type { LoginInput,SignupInput } from "./auth.validation";
+import {UnauthorizedError} from "../../core/errors/unauthorized-error";
 import { email } from "zod";
 
 import {UserResponseDto} from "../../shared/dto/user-response.dto";
+import verify from "argon2";
 
 export class AuthService{
     async signup(data:SignupInput){
@@ -30,6 +32,25 @@ export class AuthService{
             })
             .returning();
         
+        return UserResponseDto.from(user);
+    }
+
+    async login(data:LoginInput){
+        const user=await db.query.users.findFirst({
+            where: eq(users.email,data.email)
+        });
+
+        if(!user){
+            throw new UnauthorizedError("Invalid email or password");
+
+        }
+
+        const isPasswordValid=await argon2.verify(user.passwordHash,data.password);
+
+        if(!isPasswordValid){
+            throw new UnauthorizedError("invalid email or password");
+        }
+
         return UserResponseDto.from(user);
     }
 }
