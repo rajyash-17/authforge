@@ -1,4 +1,4 @@
-
+import argon2 from "argon2";
 import {eq} from "drizzle-orm";
 
 import {db} from '../../db';
@@ -14,6 +14,9 @@ export class AuthService{
         if(existingUser){
             throw new Error("Email already Exists");
         }
+
+        const passwordHash= await argon2.hash(data.password);
+        console.log(passwordHash);
     }
 }
 
