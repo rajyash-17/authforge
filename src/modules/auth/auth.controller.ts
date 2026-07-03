@@ -2,7 +2,7 @@ import { Response,Request } from "express";
 
 import { authService } from "./auth.service";
 import { success } from "zod";
-import { SignupInput } from "./auth.validation";
+import { LoginInput,SignupInput } from "./auth.validation";
 
 export class AuthController{
     async signup(
@@ -16,6 +16,18 @@ export class AuthController{
             success:true,
             data:user,
         });
+    }
+
+    async login(
+    req: Request<{}, {}, LoginInput>,
+    res: Response
+    ) {
+    const user = await authService.login(req.body);
+
+    return res.status(200).json({
+        success: true,
+        data: user,
+    });
     }
 }
 
