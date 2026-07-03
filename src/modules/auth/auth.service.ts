@@ -5,6 +5,7 @@ import {db} from '../../db';
 import { users } from "../../db/schema/users";
 
 import type { SignupInput } from "./auth.validation";
+import { email } from "zod";
 
 export class AuthService{
     async signup(data:SignupInput){
@@ -27,7 +28,13 @@ export class AuthService{
             })
             .returning();
         
-        return user;
+        return{
+            id:user.id,
+            name:user.name,
+            email:user.email,
+            createdAt:user.createdAt
+
+        };
     }
 }
 
