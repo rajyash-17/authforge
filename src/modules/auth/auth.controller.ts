@@ -2,9 +2,13 @@ import { Response,Request } from "express";
 
 import { authService } from "./auth.service";
 import { success } from "zod";
+import { SignupInput } from "./auth.validation";
 
 export class AuthController{
-    async signup(req:Request,res:Response){
+    async signup(
+        req:Request<{}, {}, SignupInput>,
+        res:Response
+    ){
 
         const user=await authService.signup(req.body);
 
