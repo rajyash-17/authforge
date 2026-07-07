@@ -24,9 +24,15 @@ export async function authMiddleware(
     );
   }
 
-  const payload = await tokenService.verifyAccessToken(token);
+  try {
+    const payload = await tokenService.verifyAccessToken(token);
 
-  req.user = payload;
+    req.user = payload;
 
-  next();
+    next();
+   } catch {
+    return next(
+        new UnauthorizedError("Invalid or expired access token")
+    );
+}
 }
