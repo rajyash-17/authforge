@@ -36,7 +36,9 @@ class TokenService {
       .sign(privateKey);
   }
 
-  async verifyAccessToken(token: string) {
+  async verifyAccessToken(
+        token: string
+        ): Promise<AccessTokenPayload> {
     const publicKey =
       await keyService.getPublicKey();
 
@@ -50,7 +52,7 @@ class TokenService {
         }
       );
 
-    return payload;
+    return payload as AccessTokenPayload;
   }
 }
 

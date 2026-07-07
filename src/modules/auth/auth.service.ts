@@ -11,6 +11,8 @@ import { email } from "zod";
 import {UserResponseDto} from "../../shared/dto/user-response.dto";
 import verify from "argon2";
 
+import { tokenService } from "./token/token.service";
+
 export class AuthService{
     async signup(data:SignupInput){
         const existingUser=await db.query.users.findFirst({
@@ -51,7 +53,15 @@ export class AuthService{
             throw new UnauthorizedError("invalid email or password");
         }
 
-        return UserResponseDto.from(user);
+        const accessToken =
+            await tokenService.signAccessToken({
+                sub: user.id,
+                email: user.email,
+            });
+
+        return {
+            accessToken,
+        };
     }
 }
 
