@@ -6,6 +6,7 @@ import { users } from "../../db/schema/users";
 
 import type { LoginInput,SignupInput } from "./auth.validation";
 import {UnauthorizedError} from "../../core/errors/unauthorized-error";
+import { ConflictError } from "../../core/errors/conflict-error";
 import { email } from "zod";
 
 import {UserResponseDto} from "../../shared/dto/user-response.dto";
@@ -13,13 +14,15 @@ import verify from "argon2";
 
 import { tokenService } from "./token/token.service";
 
+
+
 export class AuthService{
     async signup(data:SignupInput){
         const existingUser=await db.query.users.findFirst({
             where: eq(users.email,data.email)
         });
         if(existingUser){
-            throw new Error("Email already Exists");
+            throw new ConflictError("Email already Exists");
         }
 
         const passwordHash= await argon2.hash(data.password);
